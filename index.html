@@ -172,6 +172,25 @@
         </section>
 
         <section>
+            <h3>TOC/TOU</h3>
+            <p>Can we use imported variables?</p>
+
+            <ul>
+                <li><code>import</code>ed bindings are <em>determined at parse time</em> and hoisted: <pre><code class="hljs javascript" data-trim>
+                    // valid
+                    console.log('this is ok', foo)
+                    import foo from 'foo';
+                </code></pre></li>
+
+                <li class="fragment"><code>require</code> is just another function call, so assignment behaves as usual: <pre><code class="hljs javascript" data-trim>
+                    // unexpected results
+                    console.log('oh no an error', foo);
+                    const foo = require('./foo');
+                </code></pre>
+            </ul>
+        </section>
+
+        <section>
             <h3>What do we import/export?</h3>
             <p>Variable binding (ES) vs. POJSO (CommonJS)</p>
 
@@ -186,22 +205,37 @@
                     incFoo();
                     console.log(foo); // 5
                 </code></pre></li>
-                <li>With CommonJS it's...complicated. <pre class="fragment"><code class="hljs javascript" data-trim>
+                <li class="fragment" data-fragment-index="1">With CommonJS it's...complicated. <pre><code class="hljs javascript" data-trim>
                     // wut.js
                     var foo = 4;
-                    module.exports = { foo, bar: 7 };
+                    module.exports = { foo, bar: 7, incFoo, incBar };
                     function incFoo() { foo += 1; }
                     function incBar() { module.exports.bar += 1; }
                 </code></pre>
-                <pre class="fragment"><code class="hljs javascript" data-trim>
+                <pre class="fragment" data-fragment-index="2"><code class="hljs javascript" data-trim>
                     // main.js
                     var wut = require('./wut');
                     console.log(wut.foo, wut.bar); // 4, 7
                     incFoo(); incBar();
                     console.log(wut.foo, wut.bar); // 4, 8
                 </code></pre></li>
-                <li class="fragment">Since an <em>object</em> is exported changing the object works as expected.</li>
+                <li class="fragment" data-fragment-index="2">Since an <em>object</em> is exported changing the object works as expected.</li>
             </ul>
+        </section>
+
+        <section>
+            <h3>Random goodies</h3>
+
+            <pre><code class="hljs javascript" data-trim>
+                // Imports are const (read-only)
+                import foo from './foo.js';
+                foo = 4; // TypeError: Assignment to constant variable.
+            </code></pre>
+        </section>
+
+        <section>
+            <h1>Thank you</h1>
+            <p>Questions?</p>
         </section>
     </div>
     </div>
