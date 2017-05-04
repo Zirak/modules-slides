@@ -73,7 +73,7 @@
             <ul>
                 <li>Long anticipated</li>
                 <li>But modules have been around in Node for several years (CommonJS)</li>
-                <li>Why not use them, and how are ES modules different?</li>
+                <li>How are ES modules different?</li>
             </ul>
         </section>
 
@@ -101,7 +101,7 @@
                 export default 7;
 
                 // b.js
-                import florg, { number } from './a';
+                import florg, { number } from './a.js';
                 console.log(florg + number); // 11
             </code></pre>
         </section>
@@ -110,8 +110,8 @@
             <h3>CommonJS</h3>
 
             <ul>
-                <li><code>exports</code> is a POJSO, can be anything</li>
-                <li>Means you can change it at a whim</li>
+                <li><code>module.exports</code> is a POJSO, can be anything and changed anytime</li>
+                <li><code>require</code> is just another regular function</li>
                 <li><code>require</code> result is the exported POJSO</li>
             </ul>
         </section>
@@ -123,7 +123,7 @@
                 <li><code>export</code> and <code>import</code> are resolved at module parse time</li>
                 <li><code>export</code> exposes variable bindings</li>
                 <li><code>import</code> receives variable bindings</li>
-                <li>Has one (optional) default export</li>
+                <li>Have one (optional) default export</li>
                 <li>Note: Syntax is not object destructuring!</li>
             </ul>
         </section>
@@ -183,8 +183,8 @@
                 </code></pre></li>
 
                 <li class="fragment"><code>require</code> is just another function call, so assignment behaves as usual: <pre><code class="hljs javascript" data-trim>
-                    // unexpected results
-                    console.log('oh no an error', foo);
+                    // throws an error
+                    console.log('oh no an error', foo); // ReferenceError
                     const foo = require('./foo');
                 </code></pre>
             </ul>
@@ -195,7 +195,7 @@
             <p>Variable binding (ES) vs. POJSO (CommonJS)</p>
 
             <ul>
-                <li><code>import</code> receives a variable binding, <code>export</code> erm...exports one: <pre><code class="hljs javascript" data-trim>
+                <li><code>import</code> receives a variable binding, <code>export</code> exposes one: <pre><code class="hljs javascript" data-trim>
                     // foo.js
                     export let foo = 4;
                     export function incFoo() { foo += 1; }
