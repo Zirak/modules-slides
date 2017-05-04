@@ -74,6 +74,7 @@
                 <li>Long anticipated</li>
                 <li>But modules have been around in Node for several years (CommonJS)</li>
                 <li>How are ES modules different?</li>
+                <li>And why does Node have difficulty <code>import</code>ing CommonJS modules?</li>
             </ul>
         </section>
 
@@ -173,7 +174,7 @@
 
         <section>
             <h3>TOC/TOU</h3>
-            <p>Can we use imported variables?</p>
+            <p>Where can we use imported variables?</p>
 
             <ul>
                 <li><code>import</code>ed bindings are <em>determined at parse time</em> and hoisted: <pre><code class="hljs javascript" data-trim>
@@ -186,6 +187,31 @@
                     // throws an error
                     console.log('oh no an error', foo); // ReferenceError
                     const foo = require('./foo');
+                </code></pre>
+            </ul>
+        </section>
+
+        <section>
+            <h3>Where can we import from?</h3>
+            <p>String literal (ES) vs. any expression (CommonJS)</p>
+
+            <ul>
+                <li>The RHS of <code>import</code> <em>must be</em> a string literal: <pre><code class="hljs javascript" data-trim>
+                    // valid
+                    import foo from 'foo';
+
+                    // invalid
+                    import foo from 'f' + 'oo';
+                    import foo from `template-string`;
+                    import foo from 6;
+                    import foo from {};
+                </code></pre></li>
+
+                <li class="fragment">Since <code>require</code> is a regular function, we can pass anything we want: <pre><code class="hljs javascript" data-trim>
+                    require(hasTheLargeHadronColliderDestroyedTheWorldYet ?
+                        'left-pad' :
+                        Math.random() * Date.now() / 2 + 7 + '.js'
+                    );
                 </code></pre>
             </ul>
         </section>
@@ -224,13 +250,72 @@
         </section>
 
         <section>
-            <h3>Random goodies</h3>
+            <h3>Random module goodies</h3>
 
             <pre><code class="hljs javascript" data-trim>
                 // Imports are const (read-only)
                 import foo from './foo.js';
                 foo = 4; // TypeError: Assignment to constant variable.
             </code></pre>
+
+            <pre class="fragment"><code class="hljs javascript" data-trim>
+                // You can forward the exports of another module
+                export * from 'foo';
+                // Maybe more on that later
+            </code></pre>
+
+            <pre class="fragment"><code class="hljs javascript" data-trim>
+                // Proposal: dynamic imports https://github.com/tc39/proposal-dynamic-import
+                // Implements an `import` function
+                import(hasTheLargeHadronColliderDestroyedTheWorldYet ?
+                    'left-pad' :
+                    Math.random() * Date.now() / 2 + 7 + '.js'
+                ).then(module => {
+                    // win
+                });
+            </code></pre>
+
+            <pre class="fragment"><code class="hljs javascript" data-trim>
+                // Proposal: Loaders https://github.com/whatwg/loader
+                // Allows customizing the import process on several levels
+                // (all sorts of urls, transpiling on-the-fly, ...)
+                // Nothing concrete yet!
+            </code></pre>
+        </section>
+
+        <section>
+            <h3>Forward-exports are weird</h3>
+
+            <pre class="fragment"><code class="hljs javascript" data-trim>
+                // What if there are duplicate names?
+                export let foo = 4;
+                export * from 'exports-foo';
+            </code></pre>
+
+            <pre class="fragment"><code class="hljs javascript" data-trim>
+                // What if multiple modules declare the same identifier?
+
+                // mid.js
+                export * from 'exports-foo';
+                export * from 'also-exports-foo';
+            </code></pre>
+
+            <ul class="fragment"><li>The answer is It Depends: How are you importing?</li></ul>
+
+            <pre class="fragment"><code class="hljs javascript" data-trim>
+                import { foo } from './mid.js'; // SyntaxError
+            </code></pre>
+
+            <pre class="fragment"><code class="hljs javascript" data-trim>
+                import * as mid from './mid.js'; // no error
+                console.log(mid.foo); // undefined
+            </code></pre>
+
+            <ul class="fragment">
+                <li>Read <a href="https://tc39.github.io/ecma262/#sec-moduledeclarationinstantiation">15.2.1.16.4 step 12.d</a> and <a href="https://tc39.github.io/ecma262/#sec-getmodulenamespace">15.2.1.18 step 3.c.iii</a>
+                <span style="font-size: small">or not, nobody cares, go drink some coco</span>
+                </li>
+            </ul>
         </section>
 
         <section>
