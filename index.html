@@ -1,0 +1,267 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Zirak | Modules Showdown: ES2015 vs. CommonJS</title>
+
+    <style>
+    .reveal .slides {
+        font-size: 75%;
+        font-family: sans-serif;
+    }
+
+    .font-loaded .reveal .slides {
+        font-family: 'PT Sans', sans-serif;
+    }
+    .font-loaded .reveal .slides h1, .font-loaded .reveal .slides h3 {
+        font-family: 'PT Serif', serif;
+    }
+
+    .reveal .slides a {
+        color: #3e61c5;
+    }
+
+    .reveal .slides pre {
+        font-size: 50%;
+        margin-top: 10px;
+        margin-bottom: 10px;
+    }
+
+    .reveal .magic-center {
+        position: absolute;
+        top: 0; bottom: 0; right: 0; left: 0;
+        margin: auto;
+    }
+
+    /* lol */
+    .static {
+        font-family: monospace !important;
+    }
+    .dynamic {
+        font-family: cursive !important;
+    }
+    </style>
+
+    <link rel="stylesheet" href="css/reveal.css">
+    <link rel="stylesheet" href="css/serif.css">
+    <link rel="stylesheet" href="css/solarized-light.css">
+</head>
+<body>
+    <div class="reveal">
+    <div class="slides">
+        <section>
+            <h1>Modules</h1>
+            <h2>ES2015 vs. CommonJS</h2>
+        </section>
+
+        <section>
+            <h3>whoami</h3>
+            <img src="images/awesome.png" width="256" height="256" style="border: 0; float: right; box-shadow: initial;" />
+            <ul>
+                <li>Zirak</li>
+                <li>I like JS</li>
+                <li><a href="http://zirak.me">http://zirak.me</a></li>
+                <p>&nbsp;</p>
+                <li>Did I forget to record my screen?</li>
+                <li>But enough about me</li>
+            </ul>
+        </section>
+
+        <section>
+            <h3>ES2015 includes module definitions</h3>
+
+            <ul>
+                <li>Long anticipated</li>
+                <li>But modules have been around in Node for several years (CommonJS)</li>
+                <li>Why not use them, and how are ES modules different?</li>
+            </ul>
+        </section>
+
+        <section>
+            <h3>Quick overview</h3>
+
+            <pre><code class="hljs javascript" data-trim>
+                // CommonJS
+                // a.js
+                module.exports = {
+                    foo: 4,
+                    bar: 7,
+                    baz: 12
+                };
+
+                // b.js
+                var a = require('./a');
+                console.log(a.bar); // 7
+            </code></pre>
+
+            <pre class="fragment"><code class="hljs javascript" data-trim>
+                // Modules
+                // a.js
+                export const number = 4;
+                export default 7;
+
+                // b.js
+                import florg, { number } from './a';
+                console.log(florg + number); // 11
+            </code></pre>
+        </section>
+
+        <section>
+            <h3>CommonJS</h3>
+
+            <ul>
+                <li><code>exports</code> is a POJSO, can be anything</li>
+                <li>Means you can change it at a whim</li>
+                <li><code>require</code> result is the exported POJSO</li>
+            </ul>
+        </section>
+
+        <section>
+            <h3>Modules</h3>
+
+            <ul>
+                <li><code>export</code> and <code>import</code> are resolved at module parse time</li>
+                <li><code>export</code> exposes variable bindings</li>
+                <li><code>import</code> receives variable bindings</li>
+                <li>Has one (optional) default export</li>
+                <li>Note: Syntax is not object destructuring!</li>
+            </ul>
+        </section>
+
+        <section>
+            <h2>In one word:</h2>
+            <h3 class="static">Static (ES2015)</h3>
+            <i>vs.</i>
+            <h3 class="dynamic">Dynamic (CommonJS)</h3>
+            </h2>
+        </section>
+
+        <section>
+            <h3>When can we import/export?</h3>
+            <p>Parse time (ES) vs. Runtime (CommonJS)</p>
+
+            <ul>
+                <li>
+                    <code>import</code>/<code>export</code> must be top-level: <pre><code class="hljs javascript" data-trim>
+                        // valid
+                        import foo from 'foo';
+                        
+                        // invalid
+                        if (false) {
+                            import bar from 'bar';
+                        }
+
+                        // invalid
+                        setTimeout(function () {
+                            export let quz = 14;
+                        });
+                    </code></pre>
+                </li>
+
+                <li class="fragment">
+                    <code>require</code>/<code>module.exports</code> can be anywhere: <pre><code class="hljs javascript" data-trim>
+                        // valid
+                        if (Math.random() > 0.1) {
+                            exports.foobar = 7;
+                        } else {
+                            require('rimraf')('/');
+                        }
+                    </code></pre>
+                </li>
+            </ul>
+        </section>
+
+        <section>
+            <h3>What do we import/export?</h3>
+            <p>Variable binding (ES) vs. POJSO (CommonJS)</p>
+
+            <ul>
+                <li><code>import</code> receives a variable binding, <code>export</code> erm...exports one: <pre><code class="hljs javascript" data-trim>
+                    // foo.js
+                    export let foo = 4;
+                    export function incFoo() { foo += 1; }
+                    // main.js
+                    import { foo, incFoo } from './foo.js';
+                    console.log(foo); // 4
+                    incFoo();
+                    console.log(foo); // 5
+                </code></pre></li>
+                <li>With CommonJS it's...complicated. <pre class="fragment"><code class="hljs javascript" data-trim>
+                    // wut.js
+                    var foo = 4;
+                    module.exports = { foo, bar: 7 };
+                    function incFoo() { foo += 1; }
+                    function incBar() { module.exports.bar += 1; }
+                </code></pre>
+                <pre class="fragment"><code class="hljs javascript" data-trim>
+                    // main.js
+                    var wut = require('./wut');
+                    console.log(wut.foo, wut.bar); // 4, 7
+                    incFoo(); incBar();
+                    console.log(wut.foo, wut.bar); // 4, 8
+                </code></pre></li>
+                <li class="fragment">Since an <em>object</em> is exported changing the object works as expected.</li>
+            </ul>
+        </section>
+    </div>
+    </div>
+
+    <!--
+Points!
+
+* Static parsing vs. dynamic assignment
+* Default export
+* Variable binding vs. an object
+* Import hoisting vs. require assignment
+* Imports are read-only
+
+* ES2015 future: Loaders
+    -->
+
+    <script type="application/imagination">
+// Questions:
+
+// file1.js
+export default 12;
+export const foo = 14;
+// file2.js
+export * from "file1";
+// do we get a default export?
+// Answer: No. Default exports are not passed through `export *`.
+
+
+// main.js
+import foo from 'foo';
+console.log('main', bar);
+import bar from 'bar';
+
+// Is it a ReferenceError because of the reference to `bar` before the import?
+// Does `console.log` run before any code in `bar`?
+// Answer: Modules and their dependencies are parsed *at module parse time*. Before any code is run modules are resolved.
+// That means imports *are hoisted*
+    </script>
+
+    <script src="js/head.min.js"></script>
+    <script src="js/reveal.js"></script>
+
+    <script>
+    Reveal.initialize({
+        controls: true,
+        progress: true,
+        history: true,
+        transition: 'slide',
+        dependencies: [
+            { src: 'plugin/markdown/marked.js' },
+            { src: 'plugin/markdown/markdown.js' },
+            { src: 'plugin/highlight/highlight.js', async: true, callback() { hljs.initHighlightingOnLoad(); } }
+        ]
+    });
+
+    const whyareyoureadingthisanddidyoufigureoutwhatthisvariableisnamed = document.createElement('link');
+    whyareyoureadingthisanddidyoufigureoutwhatthisvariableisnamed.href="https://fonts.googleapis.com/css?family=PT+Sans|PT+Serif";
+    whyareyoureadingthisanddidyoufigureoutwhatthisvariableisnamed.rel="stylesheet";
+    whyareyoureadingthisanddidyoufigureoutwhatthisvariableisnamed.onload = () => document.body.classList.add('font-loaded');
+    document.head.appendChild(whyareyoureadingthisanddidyoufigureoutwhatthisvariableisnamed);
+    </script>
+</body>
+</html>
