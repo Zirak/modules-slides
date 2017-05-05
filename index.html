@@ -79,7 +79,7 @@
         </section>
 
         <section>
-            <h3>Quick overview</h3>
+            <h3>Quick overview: CommonJS</h3>
 
             <pre><code class="hljs javascript" data-trim>
                 // CommonJS
@@ -95,21 +95,6 @@
                 console.log(a.bar); // 7
             </code></pre>
 
-            <pre class="fragment"><code class="hljs javascript" data-trim>
-                // Modules
-                // a.js
-                export const number = 4;
-                export default 7;
-
-                // b.js
-                import florg, { number } from './a.js';
-                console.log(florg + number); // 11
-            </code></pre>
-        </section>
-
-        <section>
-            <h3>CommonJS</h3>
-
             <ul>
                 <li><code>module.exports</code> is a POJSO, can be anything and changed anytime</li>
                 <li><code>require</code> is just another regular function</li>
@@ -119,7 +104,18 @@
         </section>
 
         <section>
-            <h3>Modules</h3>
+            <h3>Quick overview: Modules</h3>
+
+            <pre><code class="hljs javascript" data-trim>
+                // Modules
+                // a.js
+                export const number = 4;
+                export default 7;
+
+                // b.js
+                import florg, { number } from './a.js';
+                console.log(florg + number); // 11
+            </code></pre>
 
             <ul>
                 <li><code>export</code> and <code>import</code> are resolved at module parse time</li>
