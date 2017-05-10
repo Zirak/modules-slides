@@ -248,10 +248,34 @@
         </section>
 
         <section>
+            <h3>In Summary</h3>
+
+            <ul>
+                <li>CommonJS and ES modules accomplish similar things, but have differing philosophies</li>
+                <li>CommonJS is <span class="dynamic">dynamic</span>, ES is <span class="static">static</span></li>
+                <li>ES modules expose variable bindings, CommonJS modules expose objects</li>
+            </ul>
+        </section>
+
+        <section>
+            <h3>Addendum: Modules browser support</h3>
+            <h5>At the time of writing, 2017/05/10
+
+            <ul>
+                <li>Safari stable (10.1)</li>
+                <li>Edge 15 (behind flag)</li>
+                <li>Firefox 54+ (behind flag)</li>
+                <li>Chrome 60+ (behind flag)</li>
+                <br />
+                <li>In other words, soon-ish</li>
+            </ul>
+        </section>
+
+        <section>
             <h3>Random module goodies</h3>
 
             <pre><code class="hljs javascript" data-trim>
-                // Imports are const (read-only)
+                // Imported bindings are const (read-only)
                 import foo from './foo.js';
                 foo = 4; // TypeError: Assignment to constant variable.
             </code></pre>
